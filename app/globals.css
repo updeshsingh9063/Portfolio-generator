@@ -1,0 +1,197 @@
+@import "tailwindcss";
+
+/* ============================================================================
+   PORTFOLIO GENERATOR — DESIGN SYSTEM
+   Derived from the editorial reference (Alyssa Marlowe). One source of truth.
+   Warm paper + warm black + a single muted-bronze accent. High-contrast
+   Didone display, elegant serif accents, clean grotesque UI. Restraint first.
+   ========================================================================== */
+
+@theme {
+  /* ---- Color -------------------------------------------------------------- */
+  --color-paper: #f1e9e0; /* warm paper base            */
+  --color-surface: #f7f1e9; /* cards on cream             */
+  --color-surface-2: #ebe1d4; /* insets / deeper cream      */
+  --color-ink: #0e0e0e; /* dark panels               */
+  --color-ink-warm: #0b0704; /* footer / deepest          */
+  --color-ink-soft: #17130f; /* elevated dark surface      */
+
+  --color-foreground: #1a1712; /* primary text on cream      */
+  --color-muted: #5a5148; /* secondary text             */
+  --color-faint: #8a7f72; /* muted-most text            */
+
+  --color-on-dark: #f1e8df; /* primary text on dark       */
+  --color-on-dark-muted: #b9ae9f; /* secondary text on dark    */
+  --color-on-dark-faint: #7c7367; /* muted text on dark        */
+
+  --color-accent: #b4906b; /* the ONE accent — bronze    */
+  --color-accent-bright: #c79a72; /* highlight variant          */
+  --color-accent-deep: #8a6b4a; /* pressed / deep             */
+
+  --color-line: #e2d6c8; /* border on cream            */
+  --color-line-strong: #d3c4b2; /* stronger divider          */
+  --color-line-dark: #2a2520; /* border on dark            */
+
+  --color-success: #5e7a5c;
+  --color-warning: #b8863a;
+  --color-error: #a5493c;
+
+  /* ---- Typography --------------------------------------------------------- */
+  --font-display: var(--font-playfair), "Playfair Display", Georgia, serif;
+  --font-serif: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  --text-caption: 0.72rem;
+  --text-caption--line-height: 1.45;
+  --text-small: 0.85rem;
+  --text-small--line-height: 1.6;
+  --text-body: 0.95rem;
+  --text-body--line-height: 1.7;
+  --text-body-lg: 1.075rem;
+  --text-body-lg--line-height: 1.7;
+  --text-h4: 1.25rem;
+  --text-h4--line-height: 1.35;
+  --text-h3: 1.6rem;
+  --text-h3--line-height: 1.25;
+  --text-h2: clamp(1.9rem, 3.5vw, 2.6rem);
+  --text-h2--line-height: 1.12;
+  --text-h1: clamp(2.4rem, 5vw, 3.4rem);
+  --text-h1--line-height: 1.05;
+  --text-display: clamp(3rem, 13vw, 12rem);
+  --text-display--line-height: 0.9;
+
+  /* ---- Radius ------------------------------------------------------------- */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --radius-pill: 999px;
+
+  /* ---- Shadow (deliberately soft — editorial is near-flat) ---------------- */
+  --shadow-sm: 0 1px 2px rgba(20, 15, 10, 0.05);
+  --shadow-md: 0 8px 24px rgba(20, 15, 10, 0.08);
+  --shadow-lg: 0 24px 60px rgba(20, 15, 10, 0.14);
+  --shadow-float: 0 30px 80px -20px rgba(20, 15, 10, 0.28);
+
+  /* ---- Motion ------------------------------------------------------------- */
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 600ms;
+
+  --animate-rise: rise 0.7s var(--ease-out-expo) both;
+  --animate-spin-slow: spin 22s linear infinite;
+  --animate-shimmer: shimmer 1.6s linear infinite;
+}
+
+/* ---- Keyframes ------------------------------------------------------------ */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes shimmer {
+  from {
+    background-position: -200% 0;
+  }
+  to {
+    background-position: 200% 0;
+  }
+}
+
+/* ---- Base ----------------------------------------------------------------- */
+@layer base {
+  * {
+    border-color: var(--color-line);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background-color: var(--color-accent);
+    color: #fff;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* ---- Composed utilities --------------------------------------------------- */
+@layer components {
+  /* Wide-tracked uppercase gold label — the reference's signature overline */
+  .overline {
+    font-family: var(--font-sans);
+    font-size: var(--text-caption);
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-accent-deep);
+  }
+
+  /* Elegant spaced serif — used for names and pull quotes */
+  .serif-spaced {
+    font-family: var(--font-serif);
+    letter-spacing: 0.06em;
+  }
+
+  /* Hairline rule used between labels and links */
+  .rule {
+    height: 1px;
+    background: var(--color-line-strong);
+  }
+}
+
+@utility text-balance {
+  text-wrap: balance;
+}
+
+@utility grain {
+  /* faint paper grain for premium depth — very subtle */
+  background-image: radial-gradient(
+    rgba(120, 100, 80, 0.035) 1px,
+    transparent 1px
+  );
+  background-size: 3px 3px;
+}
