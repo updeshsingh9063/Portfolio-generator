@@ -1,0 +1,125 @@
+// Folio — Portfolio Generator data model.
+// Multi-tenant: one deployment, many portfolios, each on a unique slug.
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")   // pooled connection (Supabase pgBouncer)
+  directUrl = env("DIRECT_URL")     // direct connection for migrations
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Plan {
+  FREE
+  PRO
+  CREATOR
+}
+
+// ---- Auth.js (NextAuth) models -------------------------------------------
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  passwordHash  String? // for email/password sign-in
+  role          Role      @default(USER)
+  plan          Plan      @default(FREE)
+  createdAt     DateTime  @default(now())
+
+  accounts   Account[]
+  sessions   Session[]
+  portfolios Portfolio[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ---- Product models -------------------------------------------------------
+
+model Portfolio {
+  id          String    @id @default(cuid())
+  userId      String
+  slug        String    @unique // the public username: folio.app/<slug>
+  title       String    @default("Untitled Portfolio")
+  templateId  String    @default("atelier")
+  content     Json // validated PortfolioData (single source of truth)
+  published   Boolean   @default(false)
+  views       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  publishedAt DateTime?
+
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  events    AnalyticsEvent[]
+  domain    Domain?
+
+  @@index([userId])
+  @@index([slug])
+}
+
+model AnalyticsEvent {
+  id          String   @id @default(cuid())
+  portfolioId String
+  type        String   @default("view") // view | project_click | resume_download | ...
+  path        String?
+  referrer    String?
+  country     String?
+  device      String? // desktop | tablet | mobile
+  createdAt   DateTime @default(now())
+
+  portfolio Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+
+  @@index([portfolioId, createdAt])
+}
+
+model Domain {
+  id          String   @id @default(cuid())
+  portfolioId String   @unique
+  host        String   @unique // e.g. updeshsingh.dev
+  verified    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  portfolio Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+}
