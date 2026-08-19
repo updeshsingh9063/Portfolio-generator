@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { auth } from "@/auth";
 import { Wordmark } from "@/components/ui/navigation";
 import { Button } from "@/components/ui/button";
+import { AccountMenu } from "@/components/ui/account-menu";
 
 export default async function Home() {
   const session = await auth();
@@ -22,9 +23,12 @@ export default async function Home() {
               Example
             </Link>
             {signedIn ? (
-              <Button variant="primary" size="sm" asChild>
-                <Link href="/dashboard">Dashboard</Link>
-              </Button>
+              <>
+                <Button variant="primary" size="sm" asChild>
+                  <Link href="/dashboard">Dashboard</Link>
+                </Button>
+                <AccountMenu name={session?.user?.name ?? session?.user?.email ?? undefined} />
+              </>
             ) : (
               <>
                 <Button variant="ghost" size="sm" asChild>

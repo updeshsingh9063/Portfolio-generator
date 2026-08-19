@@ -9,6 +9,7 @@ import { loadPortfolio } from "@/app/actions/portfolio";
 import { useHydrated } from "@/lib/use-hydrated";
 import { PublishDialog } from "@/components/editor/PublishDialog";
 import { Wordmark } from "@/components/ui/navigation";
+import { AccountMenu } from "@/components/ui/account-menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
@@ -114,6 +115,7 @@ function EditorInner() {
           <Button variant="accent" size="sm" onClick={() => setPublishOpen(true)}>
             <Rocket className="size-4" /> Publish
           </Button>
+          <AccountMenu />
         </div>
       </header>
 
