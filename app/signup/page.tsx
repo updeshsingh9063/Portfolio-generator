@@ -30,7 +30,7 @@ export default function SignupPage() {
       return;
     }
     await signIn("credentials", { email, password, redirect: false });
-    router.push("/dashboard");
+    router.push("/create");
     router.refresh();
   };
 
