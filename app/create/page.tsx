@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/loading-state";
 import { toast } from "@/components/ui/toast";
 
+import { ImportStep } from "@/components/onboarding/steps/ImportStep";
 import { PersonalStep } from "@/components/onboarding/steps/PersonalStep";
 import { EducationStep } from "@/components/onboarding/steps/EducationStep";
 import { ExperienceStep } from "@/components/onboarding/steps/ExperienceStep";
@@ -25,6 +26,7 @@ import { DesignStep } from "@/components/onboarding/steps/DesignStep";
 import { ReviewStep } from "@/components/onboarding/steps/ReviewStep";
 
 const STEP_COMPONENTS: Record<string, (p: { index: number }) => React.ReactNode> = {
+  import: ImportStep,
   personal: PersonalStep,
   education: EducationStep,
   experience: ExperienceStep,
