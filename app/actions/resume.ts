@@ -19,7 +19,23 @@ const NBSP = / /g;
 
 /* ------------------------------ text extraction --------------------------- */
 
+/**
+ * pdf.js (bundled by pdf-parse) references browser globals like `DOMMatrix`
+ * while extracting text. Those don't exist in the Node/serverless runtime,
+ * so it throws "DOMMatrix is not defined". Polyfill the minimal set from
+ * @napi-rs/canvas (already a pdf-parse dependency) BEFORE pdf.js loads.
+ */
+async function ensurePdfGlobals(): Promise<void> {
+  const g = globalThis as Record<string, unknown>;
+  if (g.DOMMatrix) return;
+  const canvas = await import("@napi-rs/canvas");
+  g.DOMMatrix = canvas.DOMMatrix;
+  g.Path2D ??= canvas.Path2D;
+  g.ImageData ??= canvas.ImageData;
+}
+
 async function extractPdf(bytes: Buffer): Promise<string> {
+  await ensurePdfGlobals();
   // pdf-parse v2 exposes a PDFParse class (pdf.js under the hood).
   const { PDFParse } = await import("pdf-parse");
   const parser = new PDFParse({ data: new Uint8Array(bytes) });
