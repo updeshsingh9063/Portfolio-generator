@@ -24,16 +24,33 @@ export function SafeImage({
   const [status, setStatus] = React.useState<"loading" | "loaded" | "error">(
     src ? "loading" : "error"
   );
+  const imgRef = React.useRef<HTMLImageElement>(null);
+
+  // Reset when the source changes.
+  React.useEffect(() => {
+    setStatus(src ? "loading" : "error");
+  }, [src]);
+
+  // Server-rendered markup, cached images, and instant `data:` URLs often finish
+  // loading before React attaches onLoad during hydration — so the load event
+  // never fires. Reconcile from the element's own `complete` state on mount.
+  React.useEffect(() => {
+    if (!src) return;
+    const img = imgRef.current;
+    if (img?.complete) {
+      setStatus(img.naturalWidth > 0 ? "loaded" : "error");
+    }
+  }, [src]);
 
   return (
     <div className={cn("relative overflow-hidden bg-surface-2", className)}>
       {src && status !== "error" && (
         <img
+          ref={imgRef}
           src={src}
           alt={alt}
-          loading="lazy"
           decoding="async"
-          onLoad={() => setStatus("loaded")}
+          onLoad={(e) => setStatus(e.currentTarget.naturalWidth > 0 ? "loaded" : "error")}
           onError={() => setStatus("error")}
           className={cn(
             "size-full object-cover transition-opacity duration-700",
