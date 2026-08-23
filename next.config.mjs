@@ -9,6 +9,12 @@ const nextConfig = {
   outputFileTracingIncludes: {
     "/create": ["./node_modules/**/pdfjs-dist/legacy/build/pdf.worker.mjs"],
   },
+  experimental: {
+    // Photo/résumé uploads POST a file to a Server Action; the default 1MB
+    // request cap rejected real photos before our handler ran. Match the 8MB
+    // upload limit (with multipart headroom).
+    serverActions: { bodySizeLimit: "12mb" },
+  },
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "**" },
